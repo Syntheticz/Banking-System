@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 
 #define FILENAME "records.txt"
@@ -46,6 +47,15 @@ bool delete(const char* account_number);
 void encrypt();
 void decrypt();
 
+//Encryption | Decryption
+void swap_chars(char *str, int key);
+void restore_chars(char* str, int key);
+void encrpyt_decimal(double amount, char* str);
+double decrypt_decimal(double amount, char* str);
+void encrypt_account(ACCOUNT* account);
+void decrypt_account(ACCOUNT* account);
+
+
 // Account information management
 void view_account_details(ACCOUNT client);
 void edit_account_details(ACCOUNT client);
@@ -56,7 +66,7 @@ void clear_transaction_history(ACCOUNT client);
 
 // Error handling and validation
 bool is_valid_account_number(char account_number[10]);
-bool is_valid_amount(double amount);
+bool is_valid_amount(double current_amount,double amount);
 
 // Security management
 void change_PIN(ACCOUNT* client);
@@ -76,13 +86,196 @@ void log_deposit(ACCOUNT client, double amount);
 void log_transfer(ACCOUNT sender, ACCOUNT receiver, double amount);
 void log_balance_inquiry(ACCOUNT client);
 
+//Time
+char* get_time();
+
 // Display management
 void display_account_summary(ACCOUNT* client);
 void display_error_message(const char* message);
 void display_success_message(const char* message);
 
 
+/*
+* Logging
+* Appending the records in their
+* respected files
+*/
 
+/*
+* Getting the current time
+* @param {}
+* @return {char*}
+*/
+char* get_time() {
+
+    //initialize the variables needs for getting the date
+    time_t current_date;
+    struct tm * date_info;
+    char* date_string = malloc(50);
+
+    time(&current_date); // get the current date
+
+    date_info = gmtime(&current_date); //convert it to UTC
+
+    strftime(date_string, 50, "%Y-%m-%dT%H:%M:%SZ", date_info);
+
+    return date_string;
+}
+
+/*
+* Write the logging information of the transaction 
+* in LOG_TRANSACTION.txt
+* @param {ACCOUNT,dobule, const char*}
+* @returns {void}
+*/
+void log_transaction(ACCOUNT client, double amount, const char* transaction_type) {
+
+    FILE* file = fopen("Logs/LOG_TRANSACTION.txt","a");
+
+    if(file == NULL) {
+        perror("Error on opening the file");
+        return;
+    }
+
+    char* date_string = get_time(); //get time
+
+    //OUTPUT [Date Time] Transaction Type: Account Number - Amount - Status !! CAN CHANGE 
+    fprintf(file, "[ %s ] %s: %s - P%.2lf - Success\n", date_string, transaction_type, client.account_number, amount);
+
+    free(date_string);  //free the allocated memory
+    fclose(file);
+}
+
+/*
+* Write the logging information of the transaction 
+* in LOG_WITHDRAW.txt
+* @param {ACCOUNT,dobule}
+* @returns {void}
+*/
+
+void log_withdrawal(ACCOUNT client, double amount) {
+    
+    FILE* file = fopen("Logs/LOG_WITHDRAW.txt","a");
+
+    if(file == NULL) {
+        perror("Error on opening the file");
+        return;
+    }
+
+    char* date_string = get_time(); //get time
+    
+    double new_balance = (double)client.account_balance - amount;
+    //OUTPUT [Date Time] Withdraw: Account Number - Amount - New Balance: Amount - Status !! CAN CHANGE 
+    fprintf(file, "[ %s ] Withdraw: %s - P%.2lf - New Balance: P%.2lf- Success\n", date_string, client.account_number, amount, new_balance);
+
+    free(date_string);  //free the allocated memory
+    fclose(file);
+}
+
+/*
+* Write the logging information of the transaction 
+* in LOG_DEPOSIT.txt
+* @param {ACCOUNT,dobule}
+* @returns {void}
+*/
+
+void log_deposit(ACCOUNT client, double amount) {
+    
+    FILE* file = fopen("Logs/LOG_DEPOSIT.txt","a");
+
+    if(file == NULL) {
+        perror("Error on opening the file");
+        return;
+    }
+
+    char* date_string = get_time(); //get time
+    
+    double new_balance = (double)client.account_balance + amount;
+    //OUTPUT [Date Time] Deposit: Account Number - Amount - New Balance: Amount - Status !! CAN CHANGE 
+    fprintf(file, "[ %s ] Deposit: %s - P%.2lf - New Balance: P%.2lf- Success\n", date_string, client.account_number, amount, new_balance);
+
+    free(date_string);  //free the allocated memory
+    fclose(file);
+}
+
+/*
+* Write the logging information of the transaction 
+* in LOG_TRANSFER.txt
+* @param {ACCOUNT,ACCOUNT,double}
+* @returns {void}
+*/
+
+void log_transfer(ACCOUNT sender, ACCOUNT receiver, double amount) {
+    
+    FILE* file = fopen("Logs/LOG_TRANSFER.txt","a");
+
+    if(file == NULL) {
+        perror("Error on opening the file");
+        return;
+    }
+
+    char* date_string = get_time(); //get time
+    double new_balance = (double)sender.account_balance - amount;
+    //OUTPUT [Date Time] Withdraw: From Account Number - Amount - To Account Number New Balance: amount - Status !! CAN CHANGE 
+    fprintf(file, "[ %s ] Transfer: From %s - P%.2lf - To %s New Balance: P%.2lf - Success\n", date_string, sender.account_number, amount, receiver.account_number, new_balance);
+
+    free(date_string);  //free the allocated memory
+    fclose(file);
+}
+
+/*
+* Write the logging information of the transaction 
+* in LOG_BALANCE_INQUIRY.txt
+* @param {ACCOUNT}
+* @returns {void}
+*/
+
+void log_balance_inquiry(ACCOUNT client) {
+    
+    FILE* file = fopen("Logs/LOG_BALANCE_INQUIRY.txt","a");
+
+    if(file == NULL) {
+        perror("Error on opening the file");
+        return;
+    }
+
+    char* date_string = get_time(); //get time
+
+    //OUTPUT [Date Time] Balance Inquiry: Account Number - Current Balance: Amount !! CAN CHANGE 
+    fprintf(file, "[ %s ] Balance Inquiry: %s - Current Balance: P%.2lf\n", date_string, client.account_number, client.account_balance);
+
+    free(date_string);  //free the allocated memory
+    fclose(file);
+}
+
+
+/*
+* Check if the account number is valid, return true if it is, otherwise return false
+* @param {char} account number - account number that needs to be verified
+* @returns {bool} value
+*/
+
+bool is_valid_account_number(char account_number[10]) {
+
+    size_t account_number_len = strlen(account_number);
+    
+    return account_number_len == 10 ? true : false; 
+}
+
+/*
+* Check if the amount is valid, return true if it is, otherwise return false
+* @param {double} amount - the amount value that needs to be verifed 
+* @returns {bool} value
+*/
+
+bool is_valid_amount(double current_amount,double amount) {
+    //will modify
+    //setting the min and max value of ammount
+    double min = 100;
+    double max = 10000;
+
+    return amount >= min && amount <= max && amount <= current_amount? true : false;    //return true if the amount is valid, otherwise false
+}
 
 /**
 * Saves an account to a file. If the account already exists, it will be overwritten.
@@ -143,7 +336,6 @@ ACCOUNT retrieve_account(const char* account_number) {
 
 
 //Encryption
-
 void swap_chars(char* str, int key) {
     int len = strlen(str);
     for (int i = 0; i < len; i++) {
@@ -169,7 +361,6 @@ double decrypt_decimal(double amount, char* str) {
     return (double) converted_amount / 100;
 }
 
-
 void encrypt_account(ACCOUNT* account) {
     swap_chars(account->name, KEY);
     swap_chars(account->account_number, KEY);
@@ -179,7 +370,7 @@ void encrypt_account(ACCOUNT* account) {
     account->account_balance = 0;
 }
 
-void decrypt_account(ACCOUNT* account){
+void decrypt_account(ACCOUNT* account) {
     restore_chars(account->name, KEY);
     restore_chars(account->account_number, KEY);
     restore_chars(account->PIN, KEY);
@@ -212,7 +403,13 @@ int main()
 
     save(account1);
     ACCOUNT acc = retrieve_account("123456781");
-    printf("%f", acc.account_balance);
+    printf("%f\n", acc.account_balance);
+    
+    log_transaction(account1,500,"Deposit");
+    log_deposit(account1,500);
+    log_withdrawal(account1,500);
+    log_transfer(account1,account2,500);
+    log_balance_inquiry(account1);
 
 
     return 0;
