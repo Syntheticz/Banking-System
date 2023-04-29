@@ -191,28 +191,8 @@ void decrypt_account(ACCOUNT* account){
 
 int main()
 {
-    
-    ACCOUNT account1 = {
-    "Jhon Philip Guiang",
-    "123456781",
-    "2000-01-01",
-    "1234",
-    "",
-    5069.50
-    };
 
-    ACCOUNT account2 = {
-        "Jane Smiths",
-        "987654311",
-        "1995-05-25",
-        "5678",
-        "",
-        10000.00
-    };
 
-    save(account1);
-    ACCOUNT acc = retrieve_account("123456781");
-    printf("%f", acc.account_balance);
 
 
     return 0;
