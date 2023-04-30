@@ -1,0 +1,16 @@
+name: CI
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test C program
+      run: |
+        make
+        ./program
+    - name: Check for merge conflicts
+      run: |
+        git fetch origin master
+        git diff --name-only origin/master | grep -E '^src/.*\.c$|^include/.*\.h$'
