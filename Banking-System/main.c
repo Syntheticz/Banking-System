@@ -588,7 +588,8 @@ void transactionMenu(ACCOUNT client) {
         printf("1. Withdraw\n");
         printf("2. Deposit\n");
         printf("3. Transfer\n");
-        printf("4. Back to main menu\n");
+        printf("4. Balance Inquiry\n");
+        printf("5. Back to main menu\n");
 
         // Prompt the user for their choice
         printf("Enter your choice: ");
@@ -632,8 +633,10 @@ void transactionMenu(ACCOUNT client) {
             }
             break;
 
-
             case 4:
+                    printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
+                    break;
+            case 5:
                 //call to main menu here
                 return;
             default:
