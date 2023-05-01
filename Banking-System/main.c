@@ -36,6 +36,7 @@ typedef struct {
 
 //Menu
 void transactionMenu(ACCOUNT client);
+int mainMenu();
 
 //account Management
 void login();
@@ -115,6 +116,129 @@ void display_success_message(const char* message);
 * @param {}
 * @return {char*}
 */
+
+int mainMenu()
+{
+    int op;
+
+    printf("MAIN MENU\n");
+    printf("1. Register New Account\n");
+    printf("2. Log-In Existing Account\n");
+    printf("3. Exit\n");
+
+    printf("\nSelect 1-3: ");
+    scanf("%d", &op);
+
+    return op;
+}
+
+void register_account()
+{
+    ACCOUNT x;
+    //memset(&x, 0, sizeof(ACCOUNT));
+
+    printf("ACCOUNT REGISTRATION\n\n");
+
+    // Input name
+    printf("Enter name: ");
+    scanf("%s", x.name);
+    x.name[strcspn(x.name, "\n")] = '\0';
+
+    //Input name and checks if birthdate is in the correct format
+    while(1)
+    {
+        printf("Enter date of birth (yyyy-mm-dd): ");
+        scanf("%s", x.date_of_birth);
+        x.date_of_birth[strcspn(x.date_of_birth, "\n")] = '\0';
+
+        int yr, m, d;
+        if (sscanf(x.date_of_birth, "%d-%d-%d", &yr, &m, &d) != 3 ||
+            yr < 1900 || yr > 9999 || m < 1 || m > 12 || d < 1 || d > 31)
+        {
+            printf("Invalid input. Please use yyyy-mm-dd format.\n\n");
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    //Input initial deposit and checks if it is within acceptable amount
+    while(1)
+    {
+        printf("Enter initial deposit (min 10,000 PHP): ");
+        scanf("%lf", &x.account_balance);
+
+        if(x.account_balance < 10000)
+        {
+            printf("Invalid Input. Minimum deposit is 10,000 PHP.\n\n");
+            while (getchar() != '\n');
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    //Inputs PIN and checks if the input is valid
+    while(1)
+    {
+        printf("Enter 4-digit PIN: ");
+        scanf("%s", x.PIN);
+        x.PIN[strcspn(x.PIN, "\n")] = '\0';
+
+        if(strlen(x.PIN) != 4)
+        {
+            printf("Invalid Input. Please enter 4 digits\n\n");
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    srand(time(NULL));
+    int num = rand() % 900000000 + 100000000;
+    snprintf(x.account_number, 10, "%d", num);
+
+    save(x);
+    system("cls");
+    printf("User successfully registered:\n");
+
+    printf("NAME: %s\n", x.name);
+    printf("BIRTH DATE: %s\n", x.date_of_birth);
+    printf("BALANCE: %lf\n", x.account_balance);
+    printf("PIN: %s\n", x.PIN);
+    printf("ACCUNT NUM: %s\n\n", x.account_number);
+
+
+    char op;
+    printf("Press Y to proceed to TRANSACTION and X to EXIT.\n");
+    printf("Choice: ");
+    scanf(" %c", &op);
+
+    while(1)
+    {
+        switch(op)
+        {
+            case 'Y':
+                transactionMenu(x); break;
+            case 'X':
+                exit(0);
+            default:
+                printf("Invalid input. Please press Y and X only.\n\n"); break;
+        }
+    }
+
+
+}
+
+void login()
+{
+
+}
+
+
 char* get_time() {
 
     //initialize the variables needs for getting the date
@@ -637,7 +761,7 @@ void transactionMenu(ACCOUNT client) {
                     printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
                     break;
             case 5:
-                //call to main menu here
+                system("cls"); mainMenu();
                 return;
             default:
                 printf("Invalid choice. Please try again.\n");
@@ -652,7 +776,27 @@ void transactionMenu(ACCOUNT client) {
 
 int main()
 {
+    //transactionMenu(account1);
 
+    while(1)
+    {
+        switch(mainMenu())
+        {
+            case 1:
+                system("cls"); register_account(); break;
+            case 2:
+                system("cls"); printf("LOG-IN"); break;
+            case 3:
+                exit(0);
+            default:
+                printf("Invalid Input (1-4 only).\n"); system("pause"); break;
+
+        }
+    }
+
+
+    //register_account();
+/*
     ACCOUNT account1 = {
     "Jhon Philip Guiang",
     "123456781",
@@ -660,8 +804,8 @@ int main()
     "1234",
     "",
     5069.50
-    };
-
+    };*/
+/*
     ACCOUNT account2 = {
         "Jane Smiths",
         "987654311",
@@ -673,7 +817,7 @@ int main()
 
     save(account1);
     save(account2);
-    /*
+
     ACCOUNT acc = retrieve_account("123456781");
     printf("%f\n", acc.account_balance);
 
@@ -689,7 +833,7 @@ int main()
    //withdraw(account1);
     //transfer(account1,account2);
 
-    transactionMenu(account1);
+    //transactionMenu(account1);
 
 
 
