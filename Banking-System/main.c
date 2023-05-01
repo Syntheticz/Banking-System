@@ -121,6 +121,7 @@ int mainMenu()
 {
     int op;
 
+    //(ACCOUNT){0};
     printf("MAIN MENU\n");
     printf("1. Register New Account\n");
     printf("2. Log-In Existing Account\n");
@@ -213,7 +214,7 @@ void register_account()
 
 
     char op;
-    printf("Press Y to proceed to TRANSACTION and X to EXIT.\n");
+    printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
     printf("Choice: ");
     scanf(" %c", &op);
 
@@ -222,9 +223,9 @@ void register_account()
         switch(op)
         {
             case 'Y':
-                transactionMenu(x); break;
+                system("cls"); transactionMenu(x); break;
             case 'X':
-                exit(0);
+                main(); return;
             default:
                 printf("Invalid input. Please press Y and X only.\n\n"); break;
         }
@@ -235,6 +236,54 @@ void register_account()
 
 void login()
 {
+    while(1)
+    {
+        char aNum[10];
+        printf("Enter 9-digit account number: ");
+        scanf("%s", aNum);
+        ACCOUNT x = retrieve_account(aNum);
+
+        if (strlen(aNum)!= 9)
+        {
+            printf("Invalid input. Please enter 9-digit account number.\n\n");
+        }
+        else if(strcmp(x.account_number, "") == 0)
+        {
+            printf("Account not found. Exiting to main menu...\n\n");
+            system("pause"); system("cls"); main();
+        }
+        else
+        {
+            printf("Log-in Successful!\n\n");
+            printf("NAME: %s\n", x.name);
+            printf("BIRTH DATE: %s\n", x.date_of_birth);
+            printf("BALANCE: %lf\n", x.account_balance);
+            printf("PIN: %s\n", x.PIN);
+            printf("ACCUNT NUM: %s\n\n", x.account_number);
+
+            char op;
+            printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
+            printf("Choice: ");
+            scanf(" %c", &op);
+
+            while(1)
+            {
+                switch(op)
+                {
+                    case 'Y':
+                        system("cls"); transactionMenu(x); break;
+                    case 'X':
+                        main(); return;
+                    default:
+                        printf("Invalid input. Please press Y and X only.\n\n"); break;
+                }
+            }
+
+        }
+    }
+
+
+
 
 }
 
@@ -761,7 +810,7 @@ void transactionMenu(ACCOUNT client) {
                     printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
                     break;
             case 5:
-                system("cls"); mainMenu();
+                system("cls"); main();
                 return;
             default:
                 printf("Invalid choice. Please try again.\n");
@@ -785,7 +834,7 @@ int main()
             case 1:
                 system("cls"); register_account(); break;
             case 2:
-                system("cls"); printf("LOG-IN"); break;
+                system("cls"); login(); break;
             case 3:
                 exit(0);
             default:
