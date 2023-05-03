@@ -794,17 +794,20 @@ int main()
         }
     }
 
+    ACCOUNT acc = retrieve_account("1235");
+    printf("Name : %s", acc.name);
 
     //register_account();
-/*
-    ACCOUNT account1 = {
-    "Jhon Philip Guiang",
-    "123456781",
-    "2000-01-01",
-    "1234",
-    "",
-    5069.50
-    };*/
+
+    // ACCOUNT account1 = {
+    // "Jhon Philip Guiang",
+    // "123456781",
+    // "2000-01-01",
+    // "1234",
+    // "",
+    // 5069.50
+    // };
+
 /*
     ACCOUNT account2 = {
         "Jane Smiths",
@@ -813,20 +816,20 @@ int main()
         "5678",
         "",
         10000.00
-    };
+    };*/
 
-    save(account1);
-    save(account2);
+    // save(account1);
+    // save(account2);
 
-    ACCOUNT acc = retrieve_account("123456781");
-    printf("%f\n", acc.account_balance);
+    // ACCOUNT acc = retrieve_account("123456781");
+    // printf("%f\n", acc.account_balance);
 
-    log_transaction(account1,500,"Deposit");
-    log_deposit(account1,500);
-    log_withdrawal(account1,500);
-    log_transfer(account1,account2,500);
-    log_balance_inquiry(account1);
-    */
+    // log_transaction(account1,500,"Deposit");
+    // log_deposit(account1,500);
+    // log_withdrawal(account1,500);
+    // log_transfer(account1,account2,500);
+    // log_balance_inquiry(account1);
+    
 
 
     //deposit(account1);
