@@ -769,10 +769,23 @@ void transfer(ACCOUNT *sender, ACCOUNT *receiver) {
     }
 }
 
+
+/**
+* BALANCE INQUIRY
+* Displays the current balance of the given account and logs the inquiry.
+* @param {ACCOUNT} client - The account for which the balance inquiry will be performed.
+* Prints out the current balance of the account passed in as an argument using printf() function.
+* Calls a function log_balance_inquiry() to log the balance inquiry with the account's information.
+*/
 void balance_inquiry(ACCOUNT client){
+
+    // Display the current balance of the client's account to the console
     printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
+
+    // Log the balance inquiry event for record-keeping purposes
     log_balance_inquiry(client);
 }
+
 
 
 void transactionMenu(ACCOUNT client) {
