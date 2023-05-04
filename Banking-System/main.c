@@ -4,6 +4,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <ctype.h>
 
 
 #define FILENAME "records.txt"
@@ -134,6 +135,7 @@ int mainMenu()
 
 void register_account()
 {
+    system("cls");
     ACCOUNT x;
     //memset(&x, 0, sizeof(ACCOUNT));
 
@@ -181,7 +183,7 @@ void register_account()
     }
 
     //Inputs PIN and checks if the input is
-    char PIN1[5], PIN2[5];
+    char PIN1[PIN_LENGTH+1], PIN2[PIN_LENGTH+1];
 
     while(1)
     {
@@ -210,12 +212,13 @@ void register_account()
         else if(strcmp(PIN1, PIN2) != 0){
              printf("Invalid Input. PIN does not match\n\n");
         }else{
+
             break;
         }
 
     }
 
-    x.PIN[strcspn(x.PIN, "\n")] = '\0';
+    strcpy(x.PIN, PIN2);
 
     srand(time(NULL));
     int num = rand() % 900000000 + 100000000;
@@ -254,6 +257,7 @@ void register_account()
 
 void login()
 {
+    system("cls");
     while(1)
     {
         char aNum[10];
@@ -261,7 +265,9 @@ void login()
         scanf("%s", aNum);
         ACCOUNT x = retrieve_account(aNum);
 
-        if (strlen(aNum)!= 9)
+
+
+        if (strlen(aNum) != 9)
         {
             printf("Invalid input. Please enter 9-digit account number.\n\n");
         }
@@ -272,35 +278,44 @@ void login()
         }
         else
         {
-            printf("Log-in Successful!\n\n");
-            printf("NAME: %s\n", x.name);
-            printf("BIRTH DATE: %s\n", x.date_of_birth);
-            printf("BALANCE: %lf\n", x.account_balance);
-            printf("PIN: %s\n", x.PIN);
-            printf("ACCUNT NUM: %s\n\n", x.account_number);
+            char pin[5];
+            printf("Enter 4-digit PIN: ");
+            scanf("%s", pin);
 
-            char op;
-            printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
-            printf("Choice: ");
-            scanf(" %c", &op);
-
-            while(1)
+            if (strcmp(x.PIN, pin) != 0)
             {
-                switch(toupper(op))
+                printf("Invalid PIN. Please try again.\n\n");
+            }
+            else
+            {
+                printf("Log-in Successful!\n\n");
+                printf("NAME: %s\n", x.name);
+                printf("BIRTH DATE: %s\n", x.date_of_birth);
+                printf("BALANCE: %lf\n", x.account_balance);
+                printf("ACCOUNT NUM: %s\n\n", x.account_number);
+
+                char op;
+                printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
+                printf("Choice: ");
+                scanf(" %c", &op);
+
+                while(1)
                 {
-                    case 'Y':
-                        system("cls"); transactionMenu(x); break;
-                    case 'X':
-                        main(); return;
-                    default:
-                        printf("Invalid input. Please press Y or X only.\n\n"); break;
+                    switch(toupper(op))
+                    {
+                        case 'Y':
+                            system("cls"); transactionMenu(x); break;
+                        case 'X':
+                            main(); return;
+                        default:
+                            printf("Invalid input. Please press Y or X only.\n\n"); break;
+                    }
                 }
             }
-
         }
     }
-
 }
+
 
 
 char* get_time() {
@@ -533,6 +548,8 @@ ACCOUNT retrieve_account(const char* account_number) {
 }
 
 
+
+
 //Encryption
 void swap_chars(char* str, int key) {
     int len = strlen(str);
@@ -645,10 +662,11 @@ bool verify_pin(ACCOUNT client) {
  */
 
 void withdraw(ACCOUNT client) {
+    system("cls");
     double amount;
     printf("CURRENT BALANCE: %.2lf \n", client.account_balance);
     while (1) {
-        printf("Enter the amount to withdraw: ");
+        printf("Enter the amount to withdraw [Max : 10000] : ");
         scanf("%lf", &amount);
 
         // Check if the amount is valid
@@ -689,6 +707,7 @@ void withdraw(ACCOUNT client) {
  */
 
 void deposit(ACCOUNT client) {
+    system("cls");
     double amount;
 
     while (1) {
@@ -728,6 +747,7 @@ void deposit(ACCOUNT client) {
  */
 
 void transfer(ACCOUNT *sender, ACCOUNT *receiver) {
+    system("cls");
     double amount;
     printf("CURRENT BALANCE: %.2lf \n", sender->account_balance);
     while (1) {
@@ -776,6 +796,7 @@ void transfer(ACCOUNT *sender, ACCOUNT *receiver) {
 */
 void balance_inquiry(ACCOUNT client){
 
+    system("cls");
     // Display the current balance of the client's account to the console
     printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
 
@@ -786,7 +807,9 @@ void balance_inquiry(ACCOUNT client){
 
 
 void transactionMenu(ACCOUNT client) {
+    system("cls");
     int choice;
+
 
     while (1) {
         // Display the transaction menu
@@ -858,7 +881,7 @@ void transactionMenu(ACCOUNT client) {
 
 int main()
 {
-    printf("Welcome to Piggy Bank!\n");
+    printf("Welcome to Our Bank!\n");
 
 
     while(1)
