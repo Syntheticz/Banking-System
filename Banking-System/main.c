@@ -141,7 +141,7 @@ void register_account()
 
     // Input name
     printf("Enter name: ");
-    scanf("%s", x.name);
+    scanf(" %[^\n]s", x.name);
     x.name[strcspn(x.name, "\n")] = '\0';
 
     //Input name and checks if birthdate is in the correct format
@@ -238,7 +238,7 @@ void register_account()
 
     while(1)
     {
-        switch(op)
+        switch(toupper(op))
         {
             case 'Y':
                 system("cls"); transactionMenu(x); break;
@@ -286,22 +286,19 @@ void login()
 
             while(1)
             {
-                switch(op)
+                switch(toupper(op))
                 {
                     case 'Y':
                         system("cls"); transactionMenu(x); break;
                     case 'X':
                         main(); return;
                     default:
-                        printf("Invalid input. Please press Y and X only.\n\n"); break;
+                        printf("Invalid input. Please press Y or X only.\n\n"); break;
                 }
             }
 
         }
     }
-
-
-
 
 }
 
@@ -861,23 +858,28 @@ void transactionMenu(ACCOUNT client) {
 
 int main()
 {
+    printf("Welcome to Piggy Bank!\n");
 
 
     while(1)
     {
+        // clear the console screen
+
         switch(mainMenu())
         {
             case 1:
-                system("cls"); register_account(); break;
+                register_account(); break;
             case 2:
-                system("cls"); login(); break;
+                login(); break;
             case 3:
                 exit(0);
             default:
-                printf("Invalid Input (1-4 only).\n"); system("pause"); break;
-
+                printf("Invalid Input (1-3 only).\n");
+                system("pause"); // wait for user input
+                break;
         }
     }
 
     return 0;
 }
+
