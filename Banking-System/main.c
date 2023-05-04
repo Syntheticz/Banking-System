@@ -44,7 +44,7 @@ void register_account();
 void withdraw(ACCOUNT client);
 void deposit(ACCOUNT client);
 void transfer(ACCOUNT *sender, ACCOUNT *Reciever);
-void balance_inquery(ACCOUNT* client);
+void balance_inquiry(ACCOUNT client);
 void close_account(ACCOUNT);
 
 //Pin Verifier
@@ -90,7 +90,6 @@ void view_all_accounts();
  * Logs different types of transactions to a transaction log file, including withdrawals,
  * deposits, transfers, and balance inquiries.
  */
-void log_transaction(ACCOUNT client, double amount, const char* transaction_type);
 void log_withdrawal(ACCOUNT client, double amount);
 void log_deposit(ACCOUNT client, double amount);
 void log_transfer(ACCOUNT sender, ACCOUNT receiver, double amount);
@@ -121,6 +120,7 @@ int mainMenu()
 {
     int op;
 
+    //(ACCOUNT){0};
     printf("MAIN MENU\n");
     printf("1. Register New Account\n");
     printf("2. Log-In Existing Account\n");
@@ -180,14 +180,15 @@ void register_account()
         }
     }
 
-    //Inputs PIN and checks if the input is valid
+    //Inputs PIN and checks if the input is
+    char PIN1[5], PIN2[5];
+
     while(1)
     {
         printf("Enter 4-digit PIN: ");
-        scanf("%s", x.PIN);
-        x.PIN[strcspn(x.PIN, "\n")] = '\0';
+        scanf("%s", PIN1);
 
-        if(strlen(x.PIN) != 4)
+        if(strlen(PIN1) != 4)
         {
             printf("Invalid Input. Please enter 4 digits\n\n");
         }
@@ -196,6 +197,25 @@ void register_account()
             break;
         }
     }
+
+    while(1)
+    {
+        printf("Re-enter 4-digit PIN: ");
+        scanf("%s", PIN2);
+
+        if(strlen(PIN2) != 4)
+        {
+            printf("Invalid Input. Please enter 4 digits\n\n");
+        }
+        else if(strcmp(PIN1, PIN2) != 0){
+             printf("Invalid Input. PIN does not match\n\n");
+        }else{
+            break;
+        }
+
+    }
+
+    x.PIN[strcspn(x.PIN, "\n")] = '\0';
 
     srand(time(NULL));
     int num = rand() % 900000000 + 100000000;
@@ -208,12 +228,11 @@ void register_account()
     printf("NAME: %s\n", x.name);
     printf("BIRTH DATE: %s\n", x.date_of_birth);
     printf("BALANCE: %lf\n", x.account_balance);
-    printf("PIN: %s\n", x.PIN);
     printf("ACCUNT NUM: %s\n\n", x.account_number);
 
 
     char op;
-    printf("Press Y to proceed to TRANSACTION and X to EXIT.\n");
+    printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
     printf("Choice: ");
     scanf(" %c", &op);
 
@@ -222,9 +241,9 @@ void register_account()
         switch(op)
         {
             case 'Y':
-                transactionMenu(x); break;
+                system("cls"); transactionMenu(x); break;
             case 'X':
-                exit(0);
+                main(); return;
             default:
                 printf("Invalid input. Please press Y and X only.\n\n"); break;
         }
@@ -235,6 +254,54 @@ void register_account()
 
 void login()
 {
+    while(1)
+    {
+        char aNum[10];
+        printf("Enter 9-digit account number: ");
+        scanf("%s", aNum);
+        ACCOUNT x = retrieve_account(aNum);
+
+        if (strlen(aNum)!= 9)
+        {
+            printf("Invalid input. Please enter 9-digit account number.\n\n");
+        }
+        else if(strcmp(x.account_number, "") == 0)
+        {
+            printf("Account not found. Exiting to main menu...\n\n");
+            system("pause"); system("cls"); main();
+        }
+        else
+        {
+            printf("Log-in Successful!\n\n");
+            printf("NAME: %s\n", x.name);
+            printf("BIRTH DATE: %s\n", x.date_of_birth);
+            printf("BALANCE: %lf\n", x.account_balance);
+            printf("PIN: %s\n", x.PIN);
+            printf("ACCUNT NUM: %s\n\n", x.account_number);
+
+            char op;
+            printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
+            printf("Choice: ");
+            scanf(" %c", &op);
+
+            while(1)
+            {
+                switch(op)
+                {
+                    case 'Y':
+                        system("cls"); transactionMenu(x); break;
+                    case 'X':
+                        main(); return;
+                    default:
+                        printf("Invalid input. Please press Y and X only.\n\n"); break;
+                }
+            }
+
+        }
+    }
+
+
+
 
 }
 
@@ -702,6 +769,11 @@ void transfer(ACCOUNT *sender, ACCOUNT *receiver) {
     }
 }
 
+void balance_inquiry(ACCOUNT client){
+    printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
+    log_balance_inquiry(client);
+}
+
 
 void transactionMenu(ACCOUNT client) {
     int choice;
@@ -758,10 +830,10 @@ void transactionMenu(ACCOUNT client) {
             break;
 
             case 4:
-                    printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
+                    balance_inquiry(client);
                     break;
             case 5:
-                system("cls"); mainMenu();
+                system("cls"); main();
                 return;
             default:
                 printf("Invalid choice. Please try again.\n");
@@ -776,7 +848,7 @@ void transactionMenu(ACCOUNT client) {
 
 int main()
 {
-    //transactionMenu(account1);
+
 
     while(1)
     {
@@ -785,7 +857,7 @@ int main()
             case 1:
                 system("cls"); register_account(); break;
             case 2:
-                system("cls"); printf("LOG-IN"); break;
+                system("cls"); login(); break;
             case 3:
                 exit(0);
             default:
@@ -793,52 +865,6 @@ int main()
 
         }
     }
-
-    ACCOUNT acc = retrieve_account("1235");
-    printf("Name : %s", acc.name);
-
-    //register_account();
-
-    // ACCOUNT account1 = {
-    // "Jhon Philip Guiang",
-    // "123456781",
-    // "2000-01-01",
-    // "1234",
-    // "",
-    // 5069.50
-    // };
-
-/*
-    ACCOUNT account2 = {
-        "Jane Smiths",
-        "987654311",
-        "1995-05-25",
-        "5678",
-        "",
-        10000.00
-    };*/
-
-    // save(account1);
-    // save(account2);
-
-    // ACCOUNT acc = retrieve_account("123456781");
-    // printf("%f\n", acc.account_balance);
-
-    // log_transaction(account1,500,"Deposit");
-    // log_deposit(account1,500);
-    // log_withdrawal(account1,500);
-    // log_transfer(account1,account2,500);
-    // log_balance_inquiry(account1);
-    
-
-
-    //deposit(account1);
-   //withdraw(account1);
-    //transfer(account1,account2);
-
-    //transactionMenu(account1);
-
-
 
     return 0;
 }

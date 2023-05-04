@@ -6,4 +6,18 @@
 	<string.h>
 	<math.h>
 	<time.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<string.h>
+	<math.h>
+	<time.h>
+
+1683171615 source:g:\banking-system\banking-system\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<string.h>
+	<math.h>
+	<time.h>
 
