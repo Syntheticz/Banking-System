@@ -1,0 +1,7 @@
+[ 2023-05-04T19:25:12Z ] Withdraw: 100014397 - P500.00 - New Balance: P9500.00- Success
+[ 2023-05-04T19:26:43Z ] Withdraw: 100014397 - P500.00 - New Balance: P9500.00- Success
+[ 2023-05-04T19:26:51Z ] Withdraw: 100014397 - P5000.00 - New Balance: P5000.00- Success
+[ 2023-05-04T20:43:18Z ] Withdraw: 100029683 - P5000.00 - New Balance: P95000.00- Success
+[ 2023-05-04T20:44:56Z ] Withdraw: 100029683 - P10000.00 - New Balance: P90000.00- Success
+[ 2023-05-04T20:48:14Z ] Withdraw: 100029683 - P10000.00 - New Balance: P90000.00- Success
+[ 2023-05-04T20:52:19Z ] Withdraw: 100029683 - P1000.00 - New Balance: P99000.00- Success
