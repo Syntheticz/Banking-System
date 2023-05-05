@@ -104,3 +104,5 @@
 [ 2023-05-05T04:26:54Z ] Balance Inquiry: 100022316 - Current Balance: P10000.00
 [ 2023-05-05T04:27:02Z ] Balance Inquiry: 100022316 - Current Balance: P9000.00
 [ 2023-05-05T04:29:08Z ] Balance Inquiry: 100022694 - Current Balance: P89999.00
+[ 2023-05-05T04:43:02Z ] Balance Inquiry: 100025411 - Current Balance: P10000.00
+[ 2023-05-05T04:43:10Z ] Balance Inquiry: 100025411 - Current Balance: P9000.00
