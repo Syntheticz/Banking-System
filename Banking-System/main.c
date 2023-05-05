@@ -37,7 +37,7 @@ typedef struct {
 int main();
 
 //Menu
-void transactionMenu(ACCOUNT *client);
+void transactionMenu(ACCOUNT client);
 int mainMenu();
 
 //account Management
@@ -225,6 +225,7 @@ void register_account()
     int num = rand() % 900000000 + 100000000;
     snprintf(x.account_number, 10, "%d", num);
 
+
     save(x);
     system("cls");
     printf("User successfully registered:\n");
@@ -236,17 +237,17 @@ void register_account()
 
 
     char op;
-    
+
     while(1)
     {
         printf("Press Y to proceed to TRANSACTION and X to EXIT to Main Menu.\n");
         printf("Choice: ");
         scanf(" %c", &op);
-        
+
         switch(toupper(op))
         {
             case 'Y':
-                system("cls"); transactionMenu(&x); break;
+                system("cls"); transactionMenu(x); break;
             case 'X':
                 main(); return;
             default:
@@ -297,7 +298,7 @@ void login()
                 printf("ACCOUNT NUM: %s\n\n", x.account_number);
 
                 char op;
-                
+
 
                 while(1)
                 {
@@ -307,7 +308,7 @@ void login()
                     switch(toupper(op))
                     {
                         case 'Y':
-                            system("cls"); transactionMenu(&x); break;
+                            system("cls"); transactionMenu(x); break;
                         case 'X':
                             main(); return;
                         default:
@@ -490,7 +491,7 @@ void save(ACCOUNT account) {
     while (fread(&temp, sizeof(ACCOUNT), 1, file) == 1) {
         if (strcmp(temp.account_number, account.account_number) == 0) {
             // Found the account, overwrite it with the new data
-            fseek(file, sizeof(ACCOUNT), SEEK_CUR);
+            fseek(file, -sizeof(ACCOUNT), SEEK_CUR);
             fwrite(&account, sizeof(ACCOUNT), 1, file);
             fclose(file);
             return;
@@ -502,6 +503,7 @@ void save(ACCOUNT account) {
 
     fclose(file);
 }
+
 
 
 /**
@@ -660,7 +662,7 @@ void withdraw(ACCOUNT client) {
                 // Update the account balance
                 client.account_balance -= amount;
                 save(client);
-
+                
 
 
                 display_success_message("Withdrawal successful.");
@@ -787,12 +789,13 @@ void balance_inquiry(ACCOUNT client){
 
 
 
-void transactionMenu(ACCOUNT *client) {
+void transactionMenu(ACCOUNT client) {
     system("cls");
     int choice;
 
 
     while (1) {
+        ACCOUNT acc = retrieve_account(client.account_number);
         // Display the transaction menu
         printf("\nPlease select a transaction:\n");
         printf("1. Withdraw\n");
@@ -807,10 +810,10 @@ void transactionMenu(ACCOUNT *client) {
 
         switch (choice) {
             case 1:
-                withdraw(client);
+                withdraw(acc);
                 break;
             case 2:
-                deposit(client);
+                deposit(acc);
                 break;
             case 3:
             {
@@ -821,10 +824,10 @@ void transactionMenu(ACCOUNT *client) {
                     scanf("%s", accnum);
                     ACCOUNT receiver = retrieve_account(accnum);
 
-                    if (strcmp(accnum, client.account_number) == 0) {
+                    if (strcmp(accnum, acc.account_number) == 0) {
                         printf("You cannot transfer funds to your own account. Please enter a different account number.\n");
                     } else if (strlen(retrieve_account(receiver.account_number).account_number) > 0) {
-                        transfer(&client, &receiver);
+                        transfer(&acc, &receiver);
                         break;
                     } else {
                         printf("Invalid account number. Please enter a valid account number.\n");
@@ -843,8 +846,10 @@ void transactionMenu(ACCOUNT *client) {
             }
             break;
 
-            case 4:
-                    balance_inquiry(client);
+            case 4: {
+                    ACCOUNT acc = retrieve_account(client.account_number);
+                    balance_inquiry(acc);
+            }
                     break;
             case 5:
                 system("cls"); main();
@@ -885,5 +890,7 @@ int main()
     }
 
     return 0;
+
+
 }
 
