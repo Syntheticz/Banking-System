@@ -1,2 +1,7 @@
 
+<<<<<<< HEAD
 [ 2023-05-04T16:40:30Z ] Deposit: 100014885 - P50000.00 - New Balance: P100000.00- Success
+=======
+[ 2023-05-04T19:27:04Z ] Deposit: 100014397 - P1000.00 - New Balance: P11000.00- Success
+[ 2023-05-04T20:43:29Z ] Deposit: 100029683 - P100.00 - New Balance: P95100.00- Success
+>>>>>>> 904e41c3a16bd66d15b520ab5c37751f8a6a0770

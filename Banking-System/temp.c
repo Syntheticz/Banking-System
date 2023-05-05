@@ -43,10 +43,10 @@ int mainMenu();
 //account Management
 void login();
 void register_account();
-void withdraw(ACCOUNT client);
-void deposit(ACCOUNT client);
+void withdraw(ACCOUNT *client);
+void deposit(ACCOUNT *client);
 void transfer(ACCOUNT *sender, ACCOUNT *Reciever);
-void balance_inquiry(ACCOUNT client);
+void balance_inquiry(ACCOUNT *client);
 void close_account(ACCOUNT);
 
 //Pin Verifier
@@ -483,9 +483,10 @@ void save(ACCOUNT account) {
         perror("Error opening file for writing");
         return;
     }
-
-    encrypt_account(&account);
-    // Search for the account by account number
+         
+    printf("%s %s",account.name,account.account_number);
+    encrypt_account(&account);  
+            // Search for the account by account number
     ACCOUNT temp;
     while (fread(&temp, sizeof(ACCOUNT), 1, file) == 1) {
         if (strcmp(temp.account_number, account.account_number) == 0) {
@@ -499,6 +500,7 @@ void save(ACCOUNT account) {
 
     // Account not found, append it to the end of the file
     fwrite(&account, sizeof(ACCOUNT), 1, file);
+    printf("not found");
 
     fclose(file);
 }
@@ -642,34 +644,32 @@ bool verify_pin(ACCOUNT client) {
  * success message and the updated account summary.
  */
 
-void withdraw(ACCOUNT client) {
+void withdraw(ACCOUNT *client) {
     system("cls");
     double amount;
-    printf("CURRENT BALANCE: %.2lf \n", client.account_balance);
+    printf("CURRENT BALANCE: %.2lf \n", client->account_balance);
     while (1) {
         printf("Enter the amount to withdraw [Max : 10000] : ");
         scanf("%lf", &amount);
 
         // Check if the amount is valid
-        if (is_valid_amount(client.account_balance, amount)) {
-            if (verify_pin(client)) {
+        if (is_valid_amount(client->account_balance, amount)) {
+            if (verify_pin(*client)) {
 
             // Log the withdrawal
-                log_withdrawal(client, amount);
+                log_withdrawal(*client, amount);
                     //transactionMenu(client);
                 // Update the account balance
-                client.account_balance -= amount;
-                save(client);
-
-
+                client->account_balance -= amount;
+                save(*client);
 
                 display_success_message("Withdrawal successful.");
-                display_account_summary(&client);
+                display_account_summary(client);
             }
             break;
 
 
-        }else if (amount>client.account_balance){
+        }else if (amount > client->account_balance){
             display_error_message("Amount entered is greater than your balance. Please enter a valid amount.");
         }else{
             display_error_message("Invalid amount. Please enter a valid amount.");
@@ -687,7 +687,7 @@ void withdraw(ACCOUNT client) {
  * success message and the updated account summary.
  */
 
-void deposit(ACCOUNT client) {
+void deposit(ACCOUNT *client) {
     system("cls");
     double amount;
 
@@ -697,17 +697,15 @@ void deposit(ACCOUNT client) {
 
         // Check if the amount is valid
         if (amount > 0) {
-            if (verify_pin(client)) {
+            if (verify_pin(*client)) {
                 // Log the deposit
-                log_deposit(client, amount);
+                log_deposit(*client, amount);
                 // Update the account balance
-                client.account_balance += amount;
-                save(client);
-
-
+                client->account_balance += amount;
+                save(*client);
 
                 display_success_message("Deposit successful.");
-                display_account_summary(&client);
+                display_account_summary(client);
             }
             break;
         }
@@ -741,7 +739,7 @@ void transfer(ACCOUNT *sender, ACCOUNT *receiver) {
 
                 // Update the receiver's account balance
 
-               receiver->account_balance= amount + receiver->account_balance;
+                receiver->account_balance= amount + receiver->account_balance;
 
                 save(*receiver);
 
@@ -775,14 +773,14 @@ void transfer(ACCOUNT *sender, ACCOUNT *receiver) {
 * Prints out the current balance of the account passed in as an argument using printf() function.
 * Calls a function log_balance_inquiry() to log the balance inquiry with the account's information.
 */
-void balance_inquiry(ACCOUNT client){
+void balance_inquiry(ACCOUNT* client){
 
     system("cls");
     // Display the current balance of the client's account to the console
-    printf("YOUR CURRENT BALANCE: %.2lf \n", client.account_balance);
+    printf("YOUR CURRENT BALANCE: %.2lf \n", client->account_balance);
 
     // Log the balance inquiry event for record-keeping purposes
-    log_balance_inquiry(client);
+    log_balance_inquiry(*client);
 }
 
 
@@ -799,7 +797,7 @@ void transactionMenu(ACCOUNT *client) {
         printf("2. Deposit\n");
         printf("3. Transfer\n");
         printf("4. Balance Inquiry\n");
-        printf("5. Back to main menu\n");
+        printf("5. Log Out\n");
 
         // Prompt the user for their choice
         printf("Enter your choice: ");
@@ -821,10 +819,10 @@ void transactionMenu(ACCOUNT *client) {
                     scanf("%s", accnum);
                     ACCOUNT receiver = retrieve_account(accnum);
 
-                    if (strcmp(accnum, client.account_number) == 0) {
+                    if (strcmp(accnum, client->account_number) == 0) {
                         printf("You cannot transfer funds to your own account. Please enter a different account number.\n");
                     } else if (strlen(retrieve_account(receiver.account_number).account_number) > 0) {
-                        transfer(&client, &receiver);
+                        transfer(client, &receiver);
                         break;
                     } else {
                         printf("Invalid account number. Please enter a valid account number.\n");
