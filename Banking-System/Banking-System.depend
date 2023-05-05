@@ -1,17 +1,12 @@
 # depslib dependency file v1.0
-1682844745 source:d:\banking system\banking-system\main.c
+1683217850 source:d:\banking system\banking-system\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
 	<string.h>
 	<math.h>
 	<time.h>
-	<stdio.h>
-	<stdlib.h>
-	<stdbool.h>
-	<string.h>
-	<math.h>
-	<time.h>
+	<ctype.h>
 
 1683171615 source:g:\banking-system\banking-system\main.c
 	<stdio.h>
